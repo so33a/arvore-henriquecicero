@@ -4,7 +4,7 @@
 #include "fila.h"
 
 ARVORE novaArvore() {
-  ARVORE a = malloc(sizeof(struct arvore));  
+  ARVORE a = malloc(sizeof(struct arvore));
   a->z = malloc(sizeof(struct node));
   a->raiz = a->z;
   a->raiz->left = a->raiz->right = a->z;
@@ -26,9 +26,9 @@ int contaNosR (ARVORE a, link h) {
 }
 
 int contaParesR (ARVORE a, link h) {
-  if(h == a->z) 
+  if(h == a->z)
     return 0;
-  if (h->key %2 == 0) 
+  if (h->key %2 == 0)
     return 1 + contaParesR(a, h->left) + contaParesR(a, h->right);
   else
     return  contaParesR(a, h->left) + contaParesR(a, h->right);
@@ -59,13 +59,13 @@ void imprimeEmOrdemR (ARVORE a, link h) {
 }
 
 void imprimeEmOrdem (ARVORE a) {
-   imprimeEmOrdemR(a, a->raiz); 
+   imprimeEmOrdemR(a, a->raiz);
 }
 
 link buscaR (ARVORE a, link h, int key) {
   if(h == a->z) return NULL;
   if(h->key == key) return h;
-  if( h->key < key) 
+  if( h->key < key)
     return buscaR(a, h->right, key);
   return buscaR(a, h->left, key);
 }
@@ -83,18 +83,18 @@ link novoNo(int key, link l, link r) {
   return x;
 }
 link inserirR (ARVORE a, link h, int key) {
-  if(h == a->z) 
-    return novoNo(key, a->z, a->z); 
+  if(h == a->z)
+    return novoNo(key, a->z, a->z);
   if(h->key == key) return h;
-  if(h->key < key) 
+  if(h->key < key)
     h->right = inserirR(a, h->right, key);
-  else 
+  else
     h->left = inserirR(a, h->left, key);
   return h;
 }
 link inserirT (ARVORE a, link h, int key) {
-  if(h == a->z) 
-    return novoNo(key, a->z, a->z); 
+  if(h == a->z)
+    return novoNo(key, a->z, a->z);
   if(h->key == key) return h;
   if(h->key < key)  {
     h->right = inserirT(a, h->right, key);
@@ -136,7 +136,7 @@ link rotL(ARVORE a, link h) {
   link x = h->right;
   h->right = x->left;
   x->left = h;
-  return x; 
+  return x;
 }
 link rotR(ARVORE a, link h) {
   link x = h->left;
@@ -145,10 +145,51 @@ link rotR(ARVORE a, link h) {
   return x;
 }
 
+void remover (ARVORE a, int key) {
+  link r = a->raiz;
+
+  if (r == NULL)
+    printf ("Elemento não localizado!\n");
+  else if (r->key > key)
+    r->left = remover (a, r->key);
+  else if (r->key < key)
+    r->right = remover (a, r->key);
+    /* encontrou o elemento */
+  else {
+    /* elemento sem filhos */
+    if (r->left == NULL && r->right == NULL) {
+      free (r);
+      r = NULL;
+    }
+    /* elemento com filho somente a direita */
+    else if (r->left == NULL) {
+      link t = r;
+      r = r->right;
+      free (t);
+    }
+    /* elemento com filho somente a esquerda */
+    else if (r->left == NULL) {
+      link t = r;
+      r = r->left;
+      free (t);
+    }
+    /* elemento com dois filhos */
+    else {
+      link f = r->left;
+      while (f->right != NULL) {
+        f = f->right;
+      }
+      r->key = f->key; /* troca a informação */
+      r->key = key;
+      r->left = removerNo (r->left, key);
+    }
+  }
+}
+
+void removerNo (ARVORE a, link node) {
+  a->raiz = remover (a, a->raiz->key)
+}
+
 #if 0
-void remover (ARVORE a, int key);
-void removerNo (ARVORE a, link node);
 void destroiArvore(ARVORE a);
-#endif 
-
-
+#endif
